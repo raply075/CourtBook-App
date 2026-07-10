@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../court/presentation/pages/home_page.dart';
 import '../providers/auth_provider.dart';
 import 'register_page.dart';
+import '../../../admin/presentation/pages/admin_dashboard_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -34,10 +35,17 @@ class _LoginPageState extends State<LoginPage> {
 
       if (!mounted) return;
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomePage()),
-      );
+      if (auth.role == 'admin') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const AdminDashboardPage()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomePage()),
+        );
+      }
     } catch (e) {
       if (!mounted) return;
 

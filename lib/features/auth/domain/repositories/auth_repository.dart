@@ -12,4 +12,6 @@ abstract class AuthRepository {
   Future<void> logout();
 
   User? get currentUser;
+
+  Future<String?> getUserRole(String userId);
 }

@@ -1,3 +1,4 @@
+import 'package:courtbook/features/admin/presentation/providers/admin_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'features/booking/presentation/providers/booking_provider.dart';
@@ -21,6 +22,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => CourtProvider()),
         ChangeNotifierProvider(create: (_) => BookingProvider()),
+        ChangeNotifierProvider(create: (_) => AdminProvider()),
       ],
       child: const CourtBookApp(),
     ),

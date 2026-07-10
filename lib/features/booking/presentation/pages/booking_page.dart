@@ -39,7 +39,7 @@ class _BookingPageState extends State<BookingPage> {
 
     final booking = BookingModel(
       userId: user.id,
-      courtId: widget.court.id,
+      courtId: widget.court.id ?? '',
       bookingDate: selectedDate!,
       startTime:
           "${startTime!.hour.toString().padLeft(2, '0')}:${startTime!.minute.toString().padLeft(2, '0')}:00",

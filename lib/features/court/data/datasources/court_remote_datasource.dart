@@ -10,4 +10,8 @@ class CourtRemoteDataSource {
 
     return (response as List).map((e) => CourtModel.fromJson(e)).toList();
   }
+
+  Future<void> addCourt(CourtModel court) async {
+    await SupabaseService.client.from('courts').insert(court.toJson());
+  }
 }

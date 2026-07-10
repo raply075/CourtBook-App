@@ -22,6 +22,9 @@ class AuthProvider extends ChangeNotifier {
   }
 
   bool _isLoading = false;
+  String? _role;
+
+  String? get role => _role;
 
   bool get isLoading => _isLoading;
 
@@ -35,6 +38,13 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     final result = await _loginUseCase(email: email, password: password);
+
+    // Ambil role user setelah login berhasil
+    final user = _repository.currentUser;
+
+    if (user != null) {
+      _role = await _repository.getUserRole(user.id);
+    }
 
     _isLoading = false;
     notifyListeners();
@@ -67,6 +77,8 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     await _logoutUseCase();
+
+    _role = null;
 
     _isLoading = false;
     notifyListeners();

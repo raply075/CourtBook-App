@@ -32,4 +32,14 @@ class AuthRemoteDataSource {
   Future<void> logout() async {
     await _client.auth.signOut();
   }
+
+  Future<String?> getUserRole(String userId) async {
+    final response = await _client
+        .from('profiles')
+        .select('role')
+        .eq('id', userId)
+        .single();
+
+    return response['role'] as String?;
+  }
 }

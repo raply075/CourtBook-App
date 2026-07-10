@@ -11,4 +11,9 @@ class CourtRepositoryImpl implements CourtRepository {
   Future<List<CourtModel>> getCourts() {
     return remoteDataSource.getCourts();
   }
+
+  @override
+  Future<void> addCourt(CourtModel court) {
+    return remoteDataSource.addCourt(court);
+  }
 }

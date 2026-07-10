@@ -1,5 +1,5 @@
 class CourtModel {
-  final String id;
+  final String? id;
   final String name;
   final String type;
   final String description;
@@ -8,7 +8,7 @@ class CourtModel {
   final bool isAvailable;
 
   CourtModel({
-    required this.id,
+    this.id,
     required this.name,
     required this.type,
     required this.description,
@@ -31,7 +31,6 @@ class CourtModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'name': name,
       'type': type,
       'description': description,
