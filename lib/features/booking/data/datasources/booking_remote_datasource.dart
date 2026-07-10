@@ -21,8 +21,18 @@ price
         .eq('user_id', userId)
         .order('created_at', ascending: false);
 
-    return response
-        .map<BookingModel>((json) => BookingModel.fromJson(json))
+    print("=========== RAW RESPONSE ===========");
+    print(response);
+
+    final bookings = response
+        .map<BookingModel>((e) => BookingModel.fromJson(e))
         .toList();
+
+    print("=========== PARSED ===========");
+    for (final b in bookings) {
+      print("${b.id} -> ${b.status}");
+    }
+
+    return bookings;
   }
 }

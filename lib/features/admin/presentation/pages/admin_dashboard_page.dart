@@ -4,8 +4,11 @@ import 'package:provider/provider.dart';
 import '../../../auth/presentation/pages/login_page.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../court/presentation/pages/home_page.dart';
+import 'manage_booking_page.dart';
 
 import 'manage_court_page.dart';
+import 'scan_qr_page.dart';
+import '../providers/admin_provider.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({super.key});
@@ -106,6 +109,45 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               );
             },
           ),
+          menuCard(
+            icon: Icons.book_online,
+            title: "Kelola Booking",
+            subtitle: "Konfirmasi atau tolak booking pengguna",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ManageBookingPage()),
+              );
+            },
+          ),
+
+          menuCard(
+            title: "Scan QR",
+            subtitle: "Scan QR Booking pengguna",
+            icon: Icons.qr_code_scanner,
+            onTap: () async {
+              final bookingId = await Navigator.push<String>(
+                context,
+                MaterialPageRoute(builder: (_) => const ScanQrPage()),
+              );
+
+              if (bookingId != null) {
+                final adminProvider = context.read<AdminProvider>();
+
+                await adminProvider.confirmBooking(bookingId);
+
+                if (!mounted) return;
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Booking berhasil dikonfirmasi"),
+                  ),
+                );
+              }
+            },
+          ),
+
+          const SizedBox(height: 15),
         ],
       ),
     );
