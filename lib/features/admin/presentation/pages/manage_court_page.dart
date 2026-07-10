@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'add_court_page.dart';
 import '../../../court/presentation/providers/court_provider.dart';
+import 'edit_court_page.dart';
 
 class ManageCourtPage extends StatefulWidget {
   const ManageCourtPage({super.key});
@@ -18,6 +19,42 @@ class _ManageCourtPageState extends State<ManageCourtPage> {
     Future.microtask(() {
       context.read<CourtProvider>().getCourts();
     });
+  }
+
+  Future<void> _deleteCourt(String id) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Hapus Lapangan"),
+        content: const Text("Apakah Anda yakin ingin menghapus lapangan ini?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("Batal"),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text("Hapus"),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    try {
+      await context.read<CourtProvider>().deleteCourt(id);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Lapangan berhasil dihapus")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
   }
 
   @override
@@ -51,13 +88,22 @@ class _ManageCourtPageState extends State<ManageCourtPage> {
                     isThreeLine: true,
 
                     trailing: PopupMenuButton<String>(
-                      onSelected: (value) {
+                      onSelected: (value) async {
                         if (value == "edit") {
-                          // STEP berikutnya
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => EditCourtPage(court: court),
+                            ),
+                          );
+
+                          if (!mounted) return;
+
+                          context.read<CourtProvider>().getCourts();
                         }
 
                         if (value == "delete") {
-                          // STEP berikutnya
+                          _deleteCourt(court.id!);
                         }
                       },
                       itemBuilder: (_) => const [
