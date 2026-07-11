@@ -5,16 +5,46 @@ import '../../data/datasources/admin_remote_datasource.dart';
 import '../../data/models/dashboard_model.dart';
 import '../../data/repositories/admin_repository_impl.dart';
 import '../../domain/usecases/dashboard_usecase.dart';
+import '../../data/models/weekly_booking_model.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/services/supabase_service.dart';
 
 class AdminProvider extends ChangeNotifier {
   late final DashboardUseCase _dashboardUseCase;
   late final ManageBookingUseCase _manageBookingUseCase;
+  RealtimeChannel? _bookingChannel;
+  void startRealtime() {
+    _bookingChannel = SupabaseService.client
+        .channel('booking_changes')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'bookings',
+          callback: (payload) async {
+            await getDashboard();
+          },
+        )
+        .subscribe();
+  }
+
+  void stopRealtime() {
+    if (_bookingChannel != null) {
+      SupabaseService.client.removeChannel(_bookingChannel!);
+      _bookingChannel = null;
+    }
+  }
 
   AdminProvider() {
     final repository = AdminRepositoryImpl(AdminRemoteDataSource());
 
     _dashboardUseCase = DashboardUseCase(repository);
     _manageBookingUseCase = ManageBookingUseCase(repository);
+  }
+
+  List<WeeklyBookingModel> weeklyBooking = [];
+  Future<void> getWeeklyBooking() async {
+    weeklyBooking = await _dashboardUseCase.getWeeklyBooking();
+    notifyListeners();
   }
 
   DashboardModel? _dashboard;
@@ -35,6 +65,7 @@ class AdminProvider extends ChangeNotifier {
 
     try {
       _dashboard = await _dashboardUseCase();
+      weeklyBooking = await _dashboardUseCase.getWeeklyBooking();
     } finally {
       _isLoading = false;
       notifyListeners();

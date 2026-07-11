@@ -2,11 +2,21 @@ import '../../../booking/data/models/booking_model.dart';
 import '../../domain/repositories/admin_repository.dart';
 import '../datasources/admin_remote_datasource.dart';
 import '../models/dashboard_model.dart';
+import '../models/weekly_booking_model.dart';
 
 class AdminRepositoryImpl implements AdminRepository {
   final AdminRemoteDataSource remoteDataSource;
 
   AdminRepositoryImpl(this.remoteDataSource);
+  @override
+  Future<List<WeeklyBookingModel>> getWeeklyBooking() {
+    return remoteDataSource.getWeeklyBooking();
+  }
+
+  @override
+  Future<List<BookingModel>> getReportBookings() {
+    return remoteDataSource.getReportBookings();
+  }
 
   @override
   Future<DashboardModel> getDashboard() {

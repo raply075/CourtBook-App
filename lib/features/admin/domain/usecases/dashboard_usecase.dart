@@ -1,4 +1,5 @@
 import '../../data/models/dashboard_model.dart';
+import '../../data/models/weekly_booking_model.dart';
 import '../repositories/admin_repository.dart';
 
 class DashboardUseCase {
@@ -8,5 +9,9 @@ class DashboardUseCase {
 
   Future<DashboardModel> call() {
     return repository.getDashboard();
+  }
+
+  Future<List<WeeklyBookingModel>> getWeeklyBooking() {
+    return repository.getWeeklyBooking();
   }
 }

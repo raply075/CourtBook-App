@@ -1,5 +1,6 @@
 import '../../../booking/data/models/booking_model.dart';
 import '../../data/models/dashboard_model.dart';
+import '../../data/models/weekly_booking_model.dart';
 
 abstract class AdminRepository {
   Future<DashboardModel> getDashboard();
@@ -10,4 +11,6 @@ abstract class AdminRepository {
 
   Future<void> rejectBooking(String bookingId);
   Future<BookingModel?> getBookingById(String id);
+  Future<List<WeeklyBookingModel>> getWeeklyBooking();
+  Future<List<BookingModel>> getReportBookings();
 }
