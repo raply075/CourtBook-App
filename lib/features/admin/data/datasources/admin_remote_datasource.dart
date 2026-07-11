@@ -42,4 +42,16 @@ class AdminRemoteDataSource {
         .update({'status': 'Rejected'})
         .eq('id', bookingId);
   }
+
+  Future<BookingModel?> getBookingById(String id) async {
+    final response = await _client
+        .from('bookings')
+        .select('*, courts(name)')
+        .eq('id', id)
+        .maybeSingle();
+
+    if (response == null) return null;
+
+    return BookingModel.fromJson(response);
+  }
 }

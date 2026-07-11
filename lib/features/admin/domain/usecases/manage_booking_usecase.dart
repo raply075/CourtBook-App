@@ -17,4 +17,8 @@ class ManageBookingUseCase {
   Future<void> rejectBooking(String id) {
     return repository.rejectBooking(id);
   }
+
+  Future<BookingModel?> getBookingById(String id) {
+    return repository.getBookingById(id);
+  }
 }

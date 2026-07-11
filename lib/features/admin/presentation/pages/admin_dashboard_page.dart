@@ -8,7 +8,7 @@ import 'manage_booking_page.dart';
 
 import 'manage_court_page.dart';
 import 'scan_qr_page.dart';
-import '../providers/admin_provider.dart';
+import 'scan_result_page.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({super.key});
@@ -131,16 +131,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 MaterialPageRoute(builder: (_) => const ScanQrPage()),
               );
 
-              if (bookingId != null) {
-                final adminProvider = context.read<AdminProvider>();
-
-                await adminProvider.confirmBooking(bookingId);
-
-                if (!mounted) return;
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Booking berhasil dikonfirmasi"),
+              if (bookingId != null && mounted) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ScanResultPage(bookingId: bookingId),
                   ),
                 );
               }

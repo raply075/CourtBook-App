@@ -9,4 +9,5 @@ abstract class AdminRepository {
   Future<void> confirmBooking(String bookingId);
 
   Future<void> rejectBooking(String bookingId);
+  Future<BookingModel?> getBookingById(String id);
 }

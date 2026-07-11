@@ -62,4 +62,15 @@ class AdminProvider extends ChangeNotifier {
     await _manageBookingUseCase.rejectBooking(id);
     await getAllBookings();
   }
+
+  Future<void> confirmBookingByQr(String bookingId) async {
+    await _manageBookingUseCase.confirmBooking(bookingId);
+  }
+
+  BookingModel? scannedBooking;
+
+  Future<void> getBookingById(String id) async {
+    scannedBooking = await _manageBookingUseCase.getBookingById(id);
+    notifyListeners();
+  }
 }
