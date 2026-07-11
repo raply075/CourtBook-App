@@ -8,6 +8,7 @@ import '../../domain/usecases/dashboard_usecase.dart';
 import '../../data/models/weekly_booking_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/services/supabase_service.dart';
+import '../services/excel_service.dart';
 
 class AdminProvider extends ChangeNotifier {
   late final DashboardUseCase _dashboardUseCase;
@@ -70,6 +71,12 @@ class AdminProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> exportExcel() async {
+    await getAllBookings();
+
+    await ExcelService.exportBookings(bookings);
   }
 
   Future<void> getAllBookings() async {

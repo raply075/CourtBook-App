@@ -7,14 +7,14 @@ import '../providers/booking_provider.dart';
 import 'booking_detail_page.dart';
 import 'upload_payment_page.dart';
 
-class MyBookingPage extends StatefulWidget {
-  const MyBookingPage({super.key});
+class BookingHistoryPage extends StatefulWidget {
+  const BookingHistoryPage({super.key});
 
   @override
-  State<MyBookingPage> createState() => _MyBookingPageState();
+  State<BookingHistoryPage> createState() => _BookingHistoryPageState();
 }
 
-class _MyBookingPageState extends State<MyBookingPage> {
+class _BookingHistoryPageState extends State<BookingHistoryPage> {
   String formatDate(DateTime date) {
     return DateFormat('dd MMMM yyyy', 'id_ID').format(date);
   }
@@ -66,7 +66,7 @@ class _MyBookingPageState extends State<MyBookingPage> {
       final user = auth.currentUser;
 
       if (user != null) {
-        bookingProvider.getMyBookings(user.id);
+        bookingProvider.getBookingHistory(user.id);
       }
     });
   }
@@ -79,13 +79,13 @@ class _MyBookingPageState extends State<MyBookingPage> {
       appBar: AppBar(title: const Text("Booking Saya")),
       body: bookingProvider.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : bookingProvider.bookings.isEmpty
+          : bookingProvider.bookingHistory.isEmpty
           ? const Center(child: Text("Belum ada booking"))
           : ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 12),
-              itemCount: bookingProvider.bookings.length,
+              itemCount: bookingProvider.bookingHistory.length,
               itemBuilder: (context, index) {
-                final booking = bookingProvider.bookings[index];
+                final booking = bookingProvider.bookingHistory[index];
 
                 return InkWell(
                   borderRadius: BorderRadius.circular(15),

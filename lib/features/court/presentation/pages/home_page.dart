@@ -5,6 +5,9 @@ import '../../../auth/presentation/pages/login_page.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../providers/court_provider.dart';
 import '../../../booking/presentation/pages/my_booking_page.dart';
+import '../../../booking/presentation/pages/booking_history_page.dart';
+import '../../../notification/presentation/pages/notification_page.dart';
+import '../../../../core/theme/theme_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -32,12 +35,50 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text("CourtBook"),
         actions: [
-          IconButton(
+          PopupMenuButton<String>(
             icon: const Icon(Icons.history),
+            onSelected: (value) {
+              if (value == 'booking') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const MyBookingPage()),
+                );
+              }
+
+              if (value == 'history') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const BookingHistoryPage()),
+                );
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'booking',
+                child: Text("Booking Saya"),
+              ),
+              const PopupMenuItem(
+                value: 'history',
+                child: Text("Riwayat Booking"),
+              ),
+            ],
+          ),
+          IconButton(
+            icon: const Icon(Icons.notifications),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const MyBookingPage()),
+                MaterialPageRoute(builder: (_) => const NotificationPage()),
+              );
+            },
+          ),
+          Consumer<ThemeProvider>(
+            builder: (context, theme, child) {
+              return IconButton(
+                icon: Icon(theme.isDark ? Icons.light_mode : Icons.dark_mode),
+                onPressed: () {
+                  theme.toggleTheme();
+                },
               );
             },
           ),

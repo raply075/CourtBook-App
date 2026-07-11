@@ -40,17 +40,41 @@ class AdminRemoteDataSource {
   }
 
   Future<void> confirmBooking(String bookingId) async {
+    final booking = await _client
+        .from('bookings')
+        .select()
+        .eq('id', bookingId)
+        .single();
+
     await _client
         .from('bookings')
         .update({'status': 'Confirmed'})
         .eq('id', bookingId);
+
+    await _client.from('notifications').insert({
+      'user_id': booking['user_id'],
+      'title': 'Booking Dikonfirmasi',
+      'message': 'Booking Anda telah dikonfirmasi oleh admin.',
+    });
   }
 
   Future<void> rejectBooking(String bookingId) async {
+    final booking = await _client
+        .from('bookings')
+        .select()
+        .eq('id', bookingId)
+        .single();
+
     await _client
         .from('bookings')
         .update({'status': 'Rejected'})
         .eq('id', bookingId);
+
+    await _client.from('notifications').insert({
+      'user_id': booking['user_id'],
+      'title': 'Booking Ditolak',
+      'message': 'Booking Anda telah ditolak oleh admin.',
+    });
   }
 
   Future<BookingModel?> getBookingById(String id) async {

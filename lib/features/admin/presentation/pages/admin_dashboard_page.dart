@@ -267,6 +267,14 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                     );
                   },
                 ),
+                menuCard(
+                  icon: Icons.table_chart,
+                  title: "Export Excel",
+                  subtitle: "Download laporan booking",
+                  onTap: () async {
+                    await admin.exportExcel();
+                  },
+                ),
               ],
             ),
     );
