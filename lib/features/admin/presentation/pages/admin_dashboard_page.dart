@@ -12,6 +12,7 @@ import 'scan_qr_page.dart';
 import 'scan_result_page.dart';
 import '../widgets/booking_chart.dart';
 import 'report_page.dart';
+import '../../../profile/presentation/pages/profile_page.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({super.key});
@@ -135,6 +136,15 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       appBar: AppBar(
         title: const Text("Dashboard Admin"),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfilePage()),
+              );
+            },
+          ),
           IconButton(icon: const Icon(Icons.logout), onPressed: _logout),
         ],
       ),
@@ -264,6 +274,17 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const ReportPage()),
+                    );
+                  },
+                ),
+                menuCard(
+                  icon: Icons.person,
+                  title: "Profile Admin",
+                  subtitle: "Lihat dan edit profil",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ProfilePage()),
                     );
                   },
                 ),

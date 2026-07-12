@@ -1,9 +1,11 @@
-import 'dart:io';
+import 'dart:typed_data';
 
-import 'package:courtbook/features/booking/data/models/booking_model.dart';
 import 'package:excel/excel.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:universal_html/html.dart' as html;
+
+import '../../../booking/data/models/booking_model.dart';
 
 class ExcelService {
   static Future<void> exportBookings(List<BookingModel> bookings) async {
@@ -22,23 +24,36 @@ class ExcelService {
     for (final booking in bookings) {
       sheet.appendRow([
         TextCellValue(booking.bookingDate.toString().split(" ")[0]),
-
         TextCellValue(booking.courtName ?? "-"),
-
         TextCellValue("${booking.startTime} - ${booking.endTime}"),
-
         TextCellValue(booking.status),
-
         IntCellValue(booking.totalPrice),
       ]);
     }
 
-    final dir = await getTemporaryDirectory();
+    final bytes = excel.encode();
 
-    final file = File("${dir.path}/booking_report.xlsx");
+    if (bytes == null) return;
 
-    await file.writeAsBytes(excel.encode()!);
+    if (kIsWeb) {
+      final blob = html.Blob([Uint8List.fromList(bytes)]);
 
-    Share.shareXFiles([XFile(file.path)], text: "Laporan Booking");
+      final url = html.Url.createObjectUrlFromBlob(blob);
+
+      html.AnchorElement(href: url)
+        ..setAttribute("download", "booking_report.xlsx")
+        ..click();
+
+      html.Url.revokeObjectUrl(url);
+    } else {
+      await Share.shareXFiles([
+        XFile.fromData(
+          Uint8List.fromList(bytes),
+          mimeType:
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          name: "booking_report.xlsx",
+        ),
+      ]);
+    }
   }
 }

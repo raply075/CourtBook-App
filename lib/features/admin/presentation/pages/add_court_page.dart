@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'dart:typed_data';
 import '../../../court/data/models/court_model.dart';
 import '../../../court/presentation/providers/court_provider.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddCourtPage extends StatefulWidget {
   const AddCourtPage({super.key});
@@ -13,11 +14,11 @@ class AddCourtPage extends StatefulWidget {
 
 class _AddCourtPageState extends State<AddCourtPage> {
   final _formKey = GlobalKey<FormState>();
-
+  XFile? _image;
   final _nameController = TextEditingController();
   final _typeController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _imageController = TextEditingController();
+
   final _priceController = TextEditingController();
 
   bool isAvailable = true;
@@ -27,25 +28,53 @@ class _AddCourtPageState extends State<AddCourtPage> {
     _nameController.dispose();
     _typeController.dispose();
     _descriptionController.dispose();
-    _imageController.dispose();
+
     _priceController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+
+    final picked = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+
+    if (picked == null) return;
+
+    setState(() {
+      _image = picked;
+    });
   }
 
   Future<void> _saveCourt() async {
     if (!_formKey.currentState!.validate()) return;
 
+    String imageUrl = "";
+
+    if (_image != null) {
+      final bytes = await _image!.readAsBytes();
+
+      imageUrl = await context.read<CourtProvider>().uploadCourtImage(
+        bytes,
+        _image!.name,
+      );
+    }
+
     final court = CourtModel(
       name: _nameController.text.trim(),
       type: _typeController.text.trim(),
       description: _descriptionController.text.trim(),
-      imageUrl: _imageController.text.trim(),
+      imageUrl: imageUrl,
       price: int.parse(_priceController.text),
       isAvailable: isAvailable,
     );
 
     try {
       await context.read<CourtProvider>().addCourt(court);
+
+      print("BERHASIL INSERT");
 
       if (!mounted) return;
 
@@ -55,6 +84,8 @@ class _AddCourtPageState extends State<AddCourtPage> {
 
       Navigator.pop(context);
     } catch (e) {
+      print("ERROR INSERT = $e");
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -104,9 +135,43 @@ class _AddCourtPageState extends State<AddCourtPage> {
 
               const SizedBox(height: 15),
 
-              TextFormField(
-                controller: _imageController,
-                decoration: decoration("Image URL"),
+              GestureDetector(
+                onTap: _pickImage,
+                child: Container(
+                  height: 180,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey),
+                  ),
+                  child: _image == null
+                      ? const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.image, size: 60),
+                            SizedBox(height: 10),
+                            Text("Pilih Gambar Lapangan"),
+                          ],
+                        )
+                      : FutureBuilder<Uint8List>(
+                          future: _image!.readAsBytes(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+
+                            return ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.memory(
+                                snapshot.data!,
+                                fit: BoxFit.cover,
+                              ),
+                            );
+                          },
+                        ),
+                ),
               ),
 
               const SizedBox(height: 15),

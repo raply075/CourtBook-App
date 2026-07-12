@@ -13,4 +13,5 @@ abstract class AdminRepository {
   Future<BookingModel?> getBookingById(String id);
   Future<List<WeeklyBookingModel>> getWeeklyBooking();
   Future<List<BookingModel>> getReportBookings();
+  Future<void> completeBooking(String bookingId);
 }

@@ -204,7 +204,9 @@ class _MyBookingPageState extends State<MyBookingPage> {
                           ),
                           const SizedBox(height: 15),
 
-                          if (booking.status == "Confirmed")
+                          if (booking.status == "Confirmed" &&
+                              (booking.paymentProof == null ||
+                                  booking.paymentProof!.isEmpty))
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton.icon(

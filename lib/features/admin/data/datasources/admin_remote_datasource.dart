@@ -143,4 +143,23 @@ class AdminRemoteDataSource {
 
     return (response as List).map((e) => BookingModel.fromJson(e)).toList();
   }
+
+  Future<void> completeBooking(String bookingId) async {
+    final booking = await _client
+        .from('bookings')
+        .select()
+        .eq('id', bookingId)
+        .single();
+
+    await _client
+        .from('bookings')
+        .update({'status': 'Completed'})
+        .eq('id', bookingId);
+
+    await _client.from('notifications').insert({
+      'user_id': booking['user_id'],
+      'title': 'Pembayaran Diverifikasi',
+      'message': 'Pembayaran Anda telah diverifikasi oleh admin.',
+    });
+  }
 }

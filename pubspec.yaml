@@ -1,5 +1,5 @@
 name: courtbook
-description: "CourtBook - Aplikasi Booking Lapangan Olahraga"
+description: "CourtBook - Aplikasi Booking Lapangan Olahraga Badminton"
 publish_to: "none"
 
 version: 1.0.0+1
@@ -45,6 +45,7 @@ dependencies:
   # pdf
   pdf: ^3.11.0
   printing: ^5.13.4
+  universal_html: ^2.2.4
 
   # excel
   excel: ^4.0.6

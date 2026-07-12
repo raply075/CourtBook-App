@@ -1,5 +1,5 @@
-import 'dart:io';
-
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -16,8 +16,7 @@ class UploadPaymentPage extends StatefulWidget {
 }
 
 class _UploadPaymentPageState extends State<UploadPaymentPage> {
-  File? image;
-
+  XFile? image;
   Future<void> pickImage() async {
     final picker = ImagePicker();
 
@@ -29,7 +28,7 @@ class _UploadPaymentPageState extends State<UploadPaymentPage> {
     if (result == null) return;
 
     setState(() {
-      image = File(result.path);
+      image = result;
     });
   }
 
@@ -52,7 +51,22 @@ class _UploadPaymentPageState extends State<UploadPaymentPage> {
                       )
                     : ClipRRect(
                         borderRadius: BorderRadius.circular(15),
-                        child: Image.file(image!),
+                        child: FutureBuilder<Uint8List>(
+                          future: image!.readAsBytes(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const CircularProgressIndicator();
+                            }
+
+                            return ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: Image.memory(
+                                snapshot.data!,
+                                fit: BoxFit.cover,
+                              ),
+                            );
+                          },
+                        ),
                       ),
               ),
             ),

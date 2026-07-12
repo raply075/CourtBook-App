@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../court/data/models/court_model.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import '../../../court/presentation/providers/court_provider.dart';
 
 class EditCourtPage extends StatefulWidget {
@@ -19,10 +22,11 @@ class _EditCourtPageState extends State<EditCourtPage> {
   late TextEditingController _nameController;
   late TextEditingController _typeController;
   late TextEditingController _descriptionController;
-  late TextEditingController _imageController;
+
   late TextEditingController _priceController;
 
   late bool isAvailable;
+  XFile? _image;
 
   @override
   void initState() {
@@ -33,7 +37,7 @@ class _EditCourtPageState extends State<EditCourtPage> {
     _descriptionController = TextEditingController(
       text: widget.court.description,
     );
-    _imageController = TextEditingController(text: widget.court.imageUrl);
+
     _priceController = TextEditingController(
       text: widget.court.price.toString(),
     );
@@ -46,9 +50,24 @@ class _EditCourtPageState extends State<EditCourtPage> {
     _nameController.dispose();
     _typeController.dispose();
     _descriptionController.dispose();
-    _imageController.dispose();
+
     _priceController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+
+    final picked = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+
+    if (picked == null) return;
+
+    setState(() {
+      _image = picked;
+    });
   }
 
   InputDecoration decoration(String label) {
@@ -60,17 +79,25 @@ class _EditCourtPageState extends State<EditCourtPage> {
 
   Future<void> _updateCourt() async {
     if (!_formKey.currentState!.validate()) return;
+    String imageUrl = widget.court.imageUrl;
 
+    if (_image != null) {
+      final bytes = await _image!.readAsBytes();
+
+      imageUrl = await context.read<CourtProvider>().uploadCourtImage(
+        bytes,
+        _image!.name,
+      );
+    }
     final court = CourtModel(
       id: widget.court.id,
       name: _nameController.text.trim(),
       type: _typeController.text.trim(),
       description: _descriptionController.text.trim(),
-      imageUrl: _imageController.text.trim(),
+      imageUrl: imageUrl,
       price: int.parse(_priceController.text),
       isAvailable: isAvailable,
     );
-
     try {
       await context.read<CourtProvider>().updateCourt(court);
 
@@ -124,9 +151,44 @@ class _EditCourtPageState extends State<EditCourtPage> {
 
               const SizedBox(height: 15),
 
-              TextFormField(
-                controller: _imageController,
-                decoration: decoration("Image URL"),
+              GestureDetector(
+                onTap: _pickImage,
+                child: Container(
+                  height: 180,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey),
+                  ),
+                  child: _image != null
+                      ? FutureBuilder<Uint8List>(
+                          future: _image!.readAsBytes(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+
+                            return ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.memory(
+                                snapshot.data!,
+                                fit: BoxFit.cover,
+                              ),
+                            );
+                          },
+                        )
+                      : widget.court.imageUrl.isNotEmpty
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            widget.court.imageUrl,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : const Center(child: Icon(Icons.image, size: 60)),
+                ),
               ),
 
               const SizedBox(height: 15),

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'court_detail_page.dart';
-import '../../../auth/presentation/pages/login_page.dart';
-import '../../../auth/presentation/providers/auth_provider.dart';
+
 import '../providers/court_provider.dart';
 import '../../../booking/presentation/pages/my_booking_page.dart';
 import '../../../booking/presentation/pages/booking_history_page.dart';
 import '../../../notification/presentation/pages/notification_page.dart';
 import '../../../../core/theme/theme_provider.dart';
+import '../../../profile/presentation/pages/profile_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -28,7 +28,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = context.watch<AuthProvider>();
     final courtProvider = context.watch<CourtProvider>();
 
     return Scaffold(
@@ -83,16 +82,11 @@ class _HomePageState extends State<HomePage> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await auth.logout();
-
-              if (!context.mounted) return;
-
-              Navigator.pushAndRemoveUntil(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const LoginPage()),
-                (route) => false,
+                MaterialPageRoute(builder: (_) => const ProfilePage()),
               );
             },
           ),

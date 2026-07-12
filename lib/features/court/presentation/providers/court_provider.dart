@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../../../core/services/supabase_service.dart';
 import '../../data/models/court_model.dart';
 import '../../data/datasources/court_remote_datasource.dart';
 import '../../data/repositories/court_repository_impl.dart';
@@ -7,6 +7,9 @@ import '../../domain/usecases/get_courts_usecase.dart';
 import '../../domain/usecases/add_court_usecase.dart';
 import '../../domain/usecases/update_court_usecase.dart';
 import '../../domain/usecases/delete_court_usecase.dart';
+import 'dart:typed_data';
+import 'package:uuid/uuid.dart';
+import 'package:path/path.dart' as path;
 
 class CourtProvider extends ChangeNotifier {
   late final CourtRepositoryImpl _repository;
@@ -81,7 +84,6 @@ class CourtProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // edit
   Future<void> updateCourt(CourtModel court) async {
     _isLoading = true;
     notifyListeners();
@@ -97,5 +99,19 @@ class CourtProvider extends ChangeNotifier {
 
     _isLoading = false;
     notifyListeners();
+  }
+
+  Future<String> uploadCourtImage(Uint8List bytes, String fileName) async {
+    final extension = path.extension(fileName);
+
+    final filePath = "${const Uuid().v4()}$extension";
+
+    await SupabaseService.client.storage
+        .from('court-images')
+        .uploadBinary(filePath, bytes);
+
+    return SupabaseService.client.storage
+        .from('court-images')
+        .getPublicUrl(filePath);
   }
 }

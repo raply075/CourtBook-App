@@ -10,6 +10,7 @@ import 'features/court/presentation/providers/court_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'features/notification/presentation/providers/notification_provider.dart';
 import 'core/theme/theme_provider.dart';
+import 'features/profile/presentation/providers/profile_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +28,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => AdminProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
       ],
       child: const CourtBookApp(),
     ),

@@ -8,6 +8,7 @@ class BookingModel {
   final int totalPrice;
   final String status;
   final String? courtName;
+  final String? paymentProof;
 
   BookingModel({
     this.id,
@@ -19,6 +20,7 @@ class BookingModel {
     required this.totalPrice,
     this.status = 'Pending',
     this.courtName,
+    this.paymentProof,
   });
 
   factory BookingModel.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class BookingModel {
       totalPrice: json['total_price'],
       status: json['status'],
       courtName: json['courts']?['name'],
+      paymentProof: json['payment_proof'],
     );
   }
 
@@ -44,6 +47,7 @@ class BookingModel {
       'end_time': endTime,
       'total_price': totalPrice,
       'status': status,
+      'payment_proof': paymentProof,
     };
   }
 }

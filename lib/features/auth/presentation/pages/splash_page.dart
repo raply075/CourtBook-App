@@ -17,6 +17,8 @@ class _SplashPageState extends State<SplashPage> {
     super.initState();
 
     Timer(const Duration(seconds: 3), () {
+      if (!mounted) return;
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const LoginPage()),
@@ -31,39 +33,55 @@ class _SplashPageState extends State<SplashPage> {
         width: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xff1565C0), Color(0xff42A5F5)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
+            colors: [Color(0xff1565C0), Color(0xff42A5F5)],
           ),
         ),
-
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset("assets/images/logo.png", width: 170),
-
-            const SizedBox(height: 30),
-
-            const Text(
-              "CourtBook",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 34,
-                fontWeight: FontWeight.bold,
+        child: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Hero(
+                tag: "logo",
+                child: Image.asset("assets/images/logo.png", width: 180),
               ),
-            ),
 
-            const SizedBox(height: 10),
+              const SizedBox(height: 30),
 
-            const Text(
-              "Booking Lapangan Olahraga",
-              style: TextStyle(color: Colors.white70, fontSize: 18),
-            ),
+              const Text(
+                "CourtBook",
+                style: TextStyle(
+                  fontSize: 34,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  letterSpacing: 1,
+                ),
+              ),
 
-            const SizedBox(height: 50),
+              const SizedBox(height: 10),
 
-            const CircularProgressIndicator(color: Colors.white),
-          ],
+              const Text(
+                "Booking Lapangan Badminton",
+                style: TextStyle(color: Colors.white70, fontSize: 17),
+              ),
+
+              const SizedBox(height: 45),
+
+              const SizedBox(
+                width: 35,
+                height: 35,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 3,
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              const Text("Loading...", style: TextStyle(color: Colors.white70)),
+            ],
+          ),
         ),
       ),
     );

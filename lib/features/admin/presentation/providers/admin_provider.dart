@@ -101,6 +101,11 @@ class AdminProvider extends ChangeNotifier {
     await getAllBookings();
   }
 
+  Future<void> completeBooking(String id) async {
+    await _manageBookingUseCase.completeBooking(id);
+    await getAllBookings();
+  }
+
   Future<void> confirmBookingByQr(String bookingId) async {
     await _manageBookingUseCase.confirmBooking(bookingId);
   }

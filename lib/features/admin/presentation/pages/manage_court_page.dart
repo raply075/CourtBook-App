@@ -77,8 +77,15 @@ class _ManageCourtPageState extends State<ManageCourtPage> {
                     vertical: 8,
                   ),
                   child: ListTile(
-                    leading: const CircleAvatar(
-                      child: Icon(Icons.sports_tennis),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: court.imageUrl.isNotEmpty
+                            ? Image.network(court.imageUrl, fit: BoxFit.cover)
+                            : const Icon(Icons.sports_tennis),
+                      ),
                     ),
 
                     title: Text(court.name),

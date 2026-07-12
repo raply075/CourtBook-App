@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:path/path.dart' as path;
 
@@ -7,6 +7,12 @@ import '../models/booking_model.dart';
 
 class BookingRemoteDataSource {
   final _client = SupabaseService.client;
+  Future<void> updateBookingStatus(String bookingId, String status) async {
+    await _client
+        .from('bookings')
+        .update({'status': status})
+        .eq('id', bookingId);
+  }
 
   Future<void> createBooking(BookingModel booking) async {
     await _client.from('bookings').insert(booking.toJson());
@@ -42,11 +48,13 @@ price
     return bookings;
   }
 
-  Future<void> uploadPaymentProof(String bookingId, File image) async {
+  Future<void> uploadPaymentProof(String bookingId, XFile image) async {
     final fileName =
         "${DateTime.now().millisecondsSinceEpoch}_${path.basename(image.path)}";
 
-    await _client.storage.from('payment_proof').upload(fileName, image);
+    final bytes = await image.readAsBytes();
+
+    await _client.storage.from('payment_proof').uploadBinary(fileName, bytes);
 
     final imageUrl = _client.storage
         .from('payment_proof')
@@ -72,6 +80,18 @@ price
 ''')
         .eq('user_id', userId)
         .inFilter('status', ['Completed', 'Rejected', 'Cancelled'])
+        .order('created_at', ascending: false);
+
+    return response.map<BookingModel>((e) => BookingModel.fromJson(e)).toList();
+  }
+
+  Future<List<BookingModel>> getAllBookings() async {
+    final response = await _client
+        .from('bookings')
+        .select('''
+      *,
+      courts(name)
+      ''')
         .order('created_at', ascending: false);
 
     return response.map<BookingModel>((e) => BookingModel.fromJson(e)).toList();

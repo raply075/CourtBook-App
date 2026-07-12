@@ -5,7 +5,7 @@ import '../../data/datasources/booking_remote_datasource.dart';
 import '../../data/repositories/booking_repository_impl.dart';
 import '../../domain/usecases/create_booking_usecase.dart';
 import '../../domain/usecases/get_booking_usecase.dart';
-import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import '../../domain/usecases/upload_payment_proof_usecase.dart';
 import '../../domain/usecases/get_booking_history_usecase.dart';
 
@@ -44,7 +44,7 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> uploadPaymentProof(String bookingId, File image) async {
+  Future<void> uploadPaymentProof(String bookingId, XFile image) async {
     _isLoading = true;
     notifyListeners();
 

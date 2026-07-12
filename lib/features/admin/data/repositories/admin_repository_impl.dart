@@ -42,4 +42,9 @@ class AdminRepositoryImpl implements AdminRepository {
   Future<BookingModel?> getBookingById(String id) {
     return remoteDataSource.getBookingById(id);
   }
+
+  @override
+  Future<void> completeBooking(String bookingId) {
+    return remoteDataSource.completeBooking(bookingId);
+  }
 }

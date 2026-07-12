@@ -203,9 +203,39 @@ class _ManageBookingPageState extends State<ManageBookingPage> {
                                           ),
                                         ),
                                       ),
+                                      const SizedBox(height: 15),
 
+                                      if (booking.paymentProof != null &&
+                                          booking.paymentProof!.isNotEmpty) ...[
+                                        const Text(
+                                          "Bukti Pembayaran",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          child: Image.network(
+                                            booking.paymentProof!,
+                                            height: 220,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ] else
+                                        const Text(
+                                          "Belum upload bukti pembayaran",
+                                        ),
+
+                                      const SizedBox(height: 15),
                                       const SizedBox(height: 18),
 
+                                      // ============================
+                                      // BOOKING BARU
+                                      // ============================
                                       if (booking.status == "Pending")
                                         Row(
                                           children: [
@@ -262,6 +292,76 @@ class _ManageBookingPageState extends State<ManageBookingPage> {
                                                 },
                                                 icon: const Icon(Icons.close),
                                                 label: const Text("Reject"),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      // ============================
+                                      // SUDAH KONFIRMASI & USER SUDAH BAYAR
+                                      // ============================
+                                      else if (booking.status == "Confirmed" &&
+                                          booking.paymentProof != null &&
+                                          booking.paymentProof!.isNotEmpty)
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: ElevatedButton.icon(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.blue,
+                                                ),
+                                                onPressed: () async {
+                                                  await provider
+                                                      .completeBooking(
+                                                        booking.id!,
+                                                      );
+
+                                                  if (!mounted) return;
+
+                                                  ScaffoldMessenger.of(
+                                                    context,
+                                                  ).showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                        "Pembayaran berhasil disetujui",
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                                icon: const Icon(
+                                                  Icons.verified,
+                                                ),
+                                                label: const Text(
+                                                  "Approve Pembayaran",
+                                                ),
+                                              ),
+                                            ),
+
+                                            const SizedBox(width: 10),
+
+                                            Expanded(
+                                              child: ElevatedButton.icon(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.red,
+                                                ),
+                                                onPressed: () async {
+                                                  await provider.rejectBooking(
+                                                    booking.id!,
+                                                  );
+
+                                                  if (!mounted) return;
+
+                                                  ScaffoldMessenger.of(
+                                                    context,
+                                                  ).showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                        "Pembayaran ditolak",
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                                icon: const Icon(Icons.close),
+                                                label: const Text("Tolak"),
                                               ),
                                             ),
                                           ],
